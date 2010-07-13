@@ -5,12 +5,17 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = "rspec-prof"
-    gem.summary = %Q{TODO: one-line summary of your gem}
-    gem.description = %Q{TODO: longer description of your gem}
+    gem.summary = %Q{Integrates ruby-prof with RSpec, allowing you to easily profile your RSpec examples.}
+    gem.description = %Q{Integrates ruby-prof with RSpec, allowing you to easily profile your RSpec examples.}
     gem.email = "sinisterchipmunk@gmail.com"
-    gem.homepage = "http://github.com/sinisterchipmunk/rspec-prof"
+    gem.homepage = "http://www.thoughtsincomputation.com/"
     gem.authors = ["Colin MacKenzie IV"]
+    gem.add_dependency "sc-core-ext", ">= 1.2.1"
+    gem.add_dependency "rspec"
+    gem.add_dependency "ruby-prof"
     gem.add_development_dependency "rspec", ">= 1.2.9"
+    gem.files = FileList['**/*']
+    gem.test_files = FileList['spec/**/*']
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
   Jeweler::GemcutterTasks.new

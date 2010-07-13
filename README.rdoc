@@ -1,6 +1,96 @@
 = rspec-prof
 
-Description goes here.
+Integrates ruby-prof with RSpec, allowing you to easily profile your RSpec examples.
+
+== Installation
+
+  gem install rspec-prof
+
+== Setup
+
+You'd probably ought to enable the gem in your spec_helper.rb file:
+  gem 'rspec-prof'
+  require 'rspec-prof'
+  
+Or, in Rails 2 (config/environment.rb):
+  config.gem 'rspec-prof'
+  
+Or, in Rails 3 (Gemfile):
+  group :test do
+    gem 'rspec-prof'
+  end
+
+== Usage
+
+Easy, peasy: in your spec files, simply add a "profile" context:
+
+  describe MyAwesomeObject do
+    context "with an awesome string" do
+      subject { MyAwesomeObject.new("an awesome string") }
+      
+      profile do    # profile these examples!
+        it "should be awesome" do
+          subject.should be_awesome
+        end
+        
+        it "should be epic" do
+          subject.should be_epic
+        end
+      end
+      
+      # not profiled:
+      it "should not be fail" do
+        subject.should_not be_fail
+      end
+    end
+  end
+  
+The usage overviewed above will, by default, profile each spec independently. If you need to profile all of them in a 
+single go, that's easy too:
+
+  describe MyAwesomeObject do
+    # . . .
+    
+    profile :all do   # run all of these examples in a single profile
+      # . . .
+    end
+  end
+
+You can also explicitly pass an :each option to #profile, if it makes you feel better. There are a number of other
+options that you can pass in the form of a hash, such as min_percent:
+
+  describe MyAwesomeObject do
+    # . . .
+    
+    profile :min_percent => 0.01 do
+      # . . .
+    end
+  end
+  
+For an exhaustive list of options, see the RSpecProf::Profiler class.
+
+=== Suspending RSpecProf
+
+You probably don't want to run the profiler every time you run a spec, because the profiler by its very nature will slow
+down your app and, therefore, limit your productivity. To disable profiling without having to change your specs, simply
+add this to your spec helper:
+
+  RSpecProf.disable!
+  
+...and you're done. In case you need it (but I doubt you will because it's on by default), you can also enable the
+profiler similarly:
+
+  RSpecProf.enable!
+
+== Known Limitations
+
+* ruby-prof cannot multithread. Therefore, RSpecProf also cannot multithread. If you try, you SHOULD get a warning (but
+  just in case, this is your warning too) that the profiling cannot be performed due to multithreading. RSpecProf SHOULD
+  disable itself at this point and allow your specs to run normally.
+* Profile blocks cannot be nested within each other. To do so would require multithreading and, even were it possible,
+  I'm not sure how RSpecProf would be expected to comply; instead, RSpecProf will merely raise an error and your specs
+  will fail.
+* I think that's it.  
 
 == Note on Patches/Pull Requests
  
