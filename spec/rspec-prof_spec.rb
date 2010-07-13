@@ -1,6 +1,6 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
-describe "RSpecProf" do
+describe RSpecProf do
   # I'm still at a loss as to how to spec extensions to rspec short of just using the extension.
   
   shared_examples_for "profiling rspec" do

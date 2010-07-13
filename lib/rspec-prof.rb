@@ -96,10 +96,10 @@ module RSpecProf
   end
 end
 
-#Spec::Runner.configure do |config|
-#  config.extend RSpecProf::ClassMethods
-#  config.include RSpecProf::InstanceMethods
-#end
+Spec::Runner.configure do |config|
+  config.extend RSpecProf::ClassMethods
+  config.include RSpecProf::InstanceMethods
+end
 
 Spec::Example::ExampleGroupMethods.send(:include, RSpecProf::ClassMethods)
 Spec::Example::ExampleMethods.send(:include, RSpecProf::InstanceMethods)
