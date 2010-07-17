@@ -7,7 +7,12 @@ end
 
 require 'sc-core-ext'
 require 'ruby-prof'
-require 'ftools'
+
+if RUBY_VERSION >= "1.9"
+  require 'fileutils'
+else
+  require 'ftools'
+end
 
 begin
   require 'spec'
