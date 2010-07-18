@@ -13,8 +13,10 @@ begin
     gem.add_dependency "sc-core-ext", ">= 1.2.1"
     gem.add_dependency "rspec"
     gem.add_dependency "ruby-prof"
-    gem.add_development_dependency "rspec", ">= 1.2.9"
-    gem.files = FileList['**/*']
+    gem.add_development_dependency "jeweler", ">= 1.4.0"
+    gem.add_development_dependency "rspec",   ">= 1.3.0"
+    gem.add_development_dependency "builder", ">= 2.1.2"
+    gem.files = FileList['**/*'] - FileList['profiles/**/*'] - FileList['pkg/**/*']
     gem.test_files = FileList['spec/**/*']
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
@@ -23,16 +25,41 @@ rescue LoadError
   puts "Jeweler (or a dependency) not available. Install it with: gem install jeweler"
 end
 
-require 'spec/rake/spectask'
-Spec::Rake::SpecTask.new(:spec) do |spec|
-  spec.libs << 'lib' << 'spec'
-  spec.spec_files = FileList['spec/**/*_spec.rb']
+unless defined?(RSPEC_VERSION)
+  begin
+    # RSpec 1.3.0
+    require 'spec/rake/spectask'
+    require 'spec/version'
+    
+    RSPEC_VERSION = Spec::VERSION::STRING
+  rescue LoadError
+    # RSpec 2.0
+    begin
+      require 'rspec/core/rake_task'
+      require 'rspec/core/version'
+      
+      RSPEC_VERSION = RSpec::Core::Version::STRING
+    rescue LoadError
+      raise "RSpec does not seem to be installed. You must gem install rspec to use this gem."
+    end
+  end
 end
 
-Spec::Rake::SpecTask.new(:rcov) do |spec|
-  spec.libs << 'lib' << 'spec'
-  spec.pattern = 'spec/**/*_spec.rb'
-  spec.rcov = true
+if RSPEC_VERSION >= "2.0.0"
+  RSpec::Core::RakeTask.new(:spec) do |spec|
+    spec.pattern = 'spec/**/*_spec.rb'
+  end
+else # Rake task for 1.3.x
+  Spec::Rake::SpecTask.new(:spec) do |spec|
+    spec.libs << 'lib' << 'spec'
+    spec.spec_files = FileList['spec/**/*_spec.rb']
+  end
+
+  Spec::Rake::SpecTask.new(:rcov) do |spec|
+    spec.libs << 'lib' << 'spec'
+    spec.pattern = 'spec/**/*_spec.rb'
+    spec.rcov = true
+  end
 end
 
 task :spec => :check_dependencies

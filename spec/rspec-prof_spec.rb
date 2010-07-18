@@ -10,28 +10,30 @@ describe RSpecProf do
     end
   end
   
-  profile do
-    it_should_behave_like "profiling rspec"
-  end
-  
-  profile :printer => :graph do
-    it_should_behave_like "profiling rspec"
-  end
-  
-  profile :measure_mode => "wall_time", :printer => :graph do
-    it_should_behave_like "profiling rspec"
-  end
-  
-  profile :file => StringIO.new("") do
-    it_should_behave_like "profiling rspec"
-  end
-  
-  profile :min_percent => 0.01 do
-    it_should_behave_like "profiling rspec"
-  end
-  
-  profile :each do
-    it_should_behave_like "profiling rspec"
+  context "a context" do
+    profile do
+      it_should_behave_like "profiling rspec"
+    end
+    
+    profile :printer => :graph do
+      it_should_behave_like "profiling rspec"
+    end
+    
+    profile :measure_mode => "wall_time", :printer => :graph do
+      it_should_behave_like "profiling rspec"
+    end
+    
+    profile :file => StringIO.new("") do
+      it_should_behave_like "profiling rspec"
+    end
+    
+    profile :min_percent => 0.01 do
+      it_should_behave_like "profiling rspec"
+    end
+    
+    profile :each do
+      it_should_behave_like "profiling rspec"
+    end
   end
   
   context "profile multiple" do

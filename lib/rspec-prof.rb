@@ -7,19 +7,9 @@ end
 
 require 'sc-core-ext'
 require 'ruby-prof'
+require 'fileutils'
 
-if RUBY_VERSION >= "1.9"
-  require 'fileutils'
-else
-  require 'ftools'
-end
-
-begin
-  require 'spec'
-rescue LoadError
-  raise "Implement me: support for rspec >= 2.0 not yet available"
-end
-
+require File.join(File.dirname(__FILE__), "rspec")
 require 'rspec-prof/profiler'
 $rspec_prof_filename_id = 0
 $rspec_prof_thread_id = Thread.current.object_id
@@ -60,11 +50,21 @@ module RSpecProf
   module InstanceMethods
     # Returns a unique filename for this example group, based on the total description and a unique identifier.
     def default_filename
-      (
-        "#{$rspec_prof_filename_id += 1}-" +
-        self.class.description_parts.join(" ") +
-        " #{description}").gsub(/\s+/, '_'
-      ).gsub(/\(profiling\)/, '')
+      if RSPEC_VERSION >= "2.0.0"
+        description = self.example.to_s
+        description = self.class.ancestors.collect { |a| a.description }.reverse.join(" ") if description.blank?
+        puts description
+        (
+          "#{$rspec_prof_filename_id += 1}-" +
+          description
+        ).gsub(/\s+/, '_').gsub(/\(profiling\)/, '')
+      else
+        (
+          "#{$rspec_prof_filename_id += 1}-" +
+          self.class.description_parts.join(" ") +
+          " #{self.description}"
+        ).gsub(/\s+/, '_').gsub(/\(profiling\)/, '')
+      end
     end
   end
   
@@ -101,10 +101,20 @@ module RSpecProf
   end
 end
 
-Spec::Runner.configure do |config|
-  config.extend RSpecProf::ClassMethods
-  config.include RSpecProf::InstanceMethods
-end
+if RSPEC_VERSION >= "2.0.0"
+  RSpec.configure do |config|
+    config.extend RSpecProf::ClassMethods
+    config.include RSpecProf::InstanceMethods
+  end
 
-Spec::Example::ExampleGroupMethods.send(:include, RSpecProf::ClassMethods)
-Spec::Example::ExampleMethods.send(:include, RSpecProf::InstanceMethods)
+  #RSpec::Core::ExampleGroup.send(:include, RSpecProf::ClassMethods)
+  #RSpec::Core::Example.send(:include, RSpecProf::InstanceMethods)
+else
+  Spec::Runner.configure do |config|
+    config.extend RSpecProf::ClassMethods
+    config.include RSpecProf::InstanceMethods
+  end
+  
+  Spec::Example::ExampleGroupMethods.send(:include, RSpecProf::ClassMethods)
+  Spec::Example::ExampleMethods.send(:include, RSpecProf::InstanceMethods)
+end

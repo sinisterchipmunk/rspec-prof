@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{rspec-prof}
-  s.version = "0.0.2"
+  s.version = "0.0.3"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Colin MacKenzie IV"]
-  s.date = %q{2010-07-13}
+  s.date = %q{2010-07-17}
   s.description = %q{Integrates ruby-prof with RSpec, allowing you to easily profile your RSpec examples.}
   s.email = %q{sinisterchipmunk@gmail.com}
   s.extra_rdoc_files = [
@@ -23,13 +23,7 @@ Gem::Specification.new do |s|
      "VERSION",
      "lib/rspec-prof.rb",
      "lib/rspec-prof/profiler.rb",
-     "pkg/rspec-prof-0.0.1.gem",
-     "profiles/1-RSpecProf__should_profile_rspec.html",
-     "profiles/2-RSpecProf__should_profile_rspec.txt",
-     "profiles/3-RSpecProf__should_profile_rspec.txt",
-     "profiles/5-RSpecProf__should_profile_rspec.html",
-     "profiles/6-RSpecProf__should_profile_rspec.html",
-     "profiles/7-RSpecProf_profile_multiple__before(:all).html",
+     "lib/rspec.rb",
      "rspec-prof.gemspec",
      "spec/rspec-prof_spec.rb",
      "spec/spec.opts",
@@ -54,18 +48,24 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<sc-core-ext>, [">= 1.2.1"])
       s.add_runtime_dependency(%q<rspec>, [">= 0"])
       s.add_runtime_dependency(%q<ruby-prof>, [">= 0"])
-      s.add_development_dependency(%q<rspec>, [">= 1.2.9"])
+      s.add_development_dependency(%q<jeweler>, [">= 1.4.0"])
+      s.add_development_dependency(%q<rspec>, [">= 1.3.0"])
+      s.add_development_dependency(%q<builder>, [">= 2.1.2"])
     else
       s.add_dependency(%q<sc-core-ext>, [">= 1.2.1"])
       s.add_dependency(%q<rspec>, [">= 0"])
       s.add_dependency(%q<ruby-prof>, [">= 0"])
-      s.add_dependency(%q<rspec>, [">= 1.2.9"])
+      s.add_dependency(%q<jeweler>, [">= 1.4.0"])
+      s.add_dependency(%q<rspec>, [">= 1.3.0"])
+      s.add_dependency(%q<builder>, [">= 2.1.2"])
     end
   else
     s.add_dependency(%q<sc-core-ext>, [">= 1.2.1"])
     s.add_dependency(%q<rspec>, [">= 0"])
     s.add_dependency(%q<ruby-prof>, [">= 0"])
-    s.add_dependency(%q<rspec>, [">= 1.2.9"])
+    s.add_dependency(%q<jeweler>, [">= 1.4.0"])
+    s.add_dependency(%q<rspec>, [">= 1.3.0"])
+    s.add_dependency(%q<builder>, [">= 2.1.2"])
   end
 end
 
