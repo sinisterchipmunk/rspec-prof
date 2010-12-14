@@ -45,8 +45,10 @@ Easy, peasy: in your spec files, simply add a "profile" context:
     end
   end
   
-The usage overviewed above will, by default, profile each spec independently. If you need to profile all of them in a 
-single go, that's easy too:
+The usage overviewed above will, by default, profile each spec independently 
+and write each result to a file into a profile directory with a unqiue name.
+
+If you need to profile all of them in a single go, that's easy too:
 
   describe MyAwesomeObject do
     # . . .
@@ -55,6 +57,17 @@ single go, that's easy too:
       # . . .
     end
   end
+  
+How about displaying the output in flat format to STDOUT?  No problem:
+
+  describe MyAwesomeObject do
+    # . . .
+    
+    profile :file => STDOUT, :printer => :flat do   # show flat results to STDOUT 
+      # . . .
+    end
+  end
+
 
 You can also explicitly pass an :each option to #profile, if it makes you feel better. There are a number of other
 options that you can pass in the form of a hash, such as min_percent:
