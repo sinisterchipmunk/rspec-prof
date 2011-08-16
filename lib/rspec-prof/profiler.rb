@@ -54,8 +54,13 @@ module RSpecProf
       file = options[:file]
       result = RubyProf.stop
       
-      printer_class = options[:printer].kind_of?(Class) ? options[:printer] :
-                      "RubyProf::#{options[:printer].to_s.camelize}Printer".constantize
+      printer_class = 
+        if options[:printer].is_a?( Class )
+          options[:printer]
+        else
+          classname = options[:printer].to_s.capitalize.gsub( /_(\w)/ ) { $1.upcase } + 'Printer'
+          RubyProf.const_get( classname )
+        end
       with_io(file) do |out|
         printer = printer_class.new(result)
         printer.print(out, :print_file => options[:print_file], :min_percent => options[:min_percent])
