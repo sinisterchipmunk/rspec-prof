@@ -1,11 +1,9 @@
 unless defined?(Gem)
   require 'rubygems'
-  gem 'sc-core-ext', ">= 1.2.1"
   gem 'rspec'
   gem 'ruby-prof'
 end
 
-require 'sc-core-ext'
 require 'ruby-prof'
 require 'fileutils'
 
@@ -52,7 +50,8 @@ module RSpecProf
     def default_filename
       if RSPEC_VERSION >= "2.0.0"
         description = self.example.to_s
-        description = self.class.ancestors.collect { |a| a.description }.reverse.join(" ") if description.blank?
+        description = self.class.ancestors.collect { |a| a.description }.reverse.join(" ") if 
+			(description.nil? || description.empty?)
         puts description
         (
           "#{$rspec_prof_filename_id += 1}-" +
@@ -75,7 +74,7 @@ module RSpecProf
     # see RSpecProf::Profiler for information on those.
     def profile(scope = :each, options = {}, &block)
       if scope.kind_of?(Hash)
-        options.reverse_merge! scope
+        options = scope.merge( options )
         scope = :each
       end
       
@@ -83,7 +82,8 @@ module RSpecProf
         before(scope) do
           raise "Cannot start profiling because a profiler is already active" if @profiler
           if Thread.current.object_id == $rspec_prof_thread_id
-            @profiler = RSpecProf::Profiler.new(options.reverse_merge(:file => default_filename))
+            options[:file] ||= default_filename
+            @profiler = RSpecProf::Profiler.new(options)
             @profiler.start
           else
             Kernel.warn "Profiling is disabled because you appear to be multi-threading the specs"

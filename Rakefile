@@ -10,7 +10,6 @@ begin
     gem.email = "sinisterchipmunk@gmail.com"
     gem.homepage = "http://www.thoughtsincomputation.com/"
     gem.authors = ["Colin MacKenzie IV"]
-    gem.add_dependency "sc-core-ext", ">= 1.2.1"
     gem.add_dependency "rspec"
     gem.add_dependency "ruby-prof"
     gem.add_development_dependency "jeweler", ">= 1.4.0"
