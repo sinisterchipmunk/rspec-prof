@@ -1,27 +1,13 @@
-require 'rubygems'
-require 'rake'
-
 begin
-  require 'jeweler'
-  Jeweler::Tasks.new do |gem|
-    gem.name = "rspec-prof"
-    gem.summary = %Q{Integrates ruby-prof with RSpec, allowing you to easily profile your RSpec examples.}
-    gem.description = %Q{Integrates ruby-prof with RSpec, allowing you to easily profile your RSpec examples.}
-    gem.email = "sinisterchipmunk@gmail.com"
-    gem.homepage = "http://www.thoughtsincomputation.com/"
-    gem.authors = ["Colin MacKenzie IV"]
-    gem.add_dependency "rspec"
-    gem.add_dependency "ruby-prof"
-    gem.add_development_dependency "jeweler", ">= 1.4.0"
-    gem.add_development_dependency "rspec",   ">= 1.3.0"
-    gem.add_development_dependency "builder", ">= 2.1.2"
-    gem.files = FileList['**/*'] - FileList['profiles/**/*'] - FileList['pkg/**/*']
-    gem.test_files = FileList['spec/**/*']
-    # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
-  end
-  Jeweler::GemcutterTasks.new
+  require 'bundler'
+  Bundler::GemHelper.install_tasks
+  Bundler.setup
 rescue LoadError
-  puts "Jeweler (or a dependency) not available. Install it with: gem install jeweler"
+  puts " *** You don't seem to have Bundler installed. ***"
+  puts "     Please run the following command:"
+  puts
+  puts "       gem install bundler"
+  raise "bundler is not installed"
 end
 
 unless defined?(RSPEC_VERSION)
@@ -60,8 +46,6 @@ else # Rake task for 1.3.x
     spec.rcov = true
   end
 end
-
-task :spec => :check_dependencies
 
 task :default => :spec
 
