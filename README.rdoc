@@ -1,4 +1,4 @@
-= rspec-prof {<img src="https://travis-ci.org/sinisterchipmunk/rspec-prof.png?branch=master" alt="Build Status" />}[https://travis-ci.org/sinisterchipmunk/rspec-prof] {<img src="https://coveralls.io/repos/sinisterchipmunk/rspec-prof/badge.png?branch=master" alt="Coverage Status" />}[https://coveralls.io/r/sinisterchipmunk/rspec-prof?branch=master]
+= rspec-prof {<img src="https://travis-ci.org/sinisterchipmunk/rspec-prof.png?branch=master" alt="Build Status" />}[https://travis-ci.org/sinisterchipmunk/rspec-prof] {<img src="https://coveralls.io/repos/sinisterchipmunk/rspec-prof/badge.png?branch=master" alt="Coverage Status" />}[https://coveralls.io/r/sinisterchipmunk/rspec-prof?branch=master] {<img src="https://codeclimate.com/github/sinisterchipmunk/rspec-prof.png" />}[https://codeclimate.com/github/sinisterchipmunk/rspec-prof]
 
 Integrates ruby-prof with RSpec, allowing you to easily profile your RSpec
 examples.
