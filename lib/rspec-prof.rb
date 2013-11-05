@@ -1,120 +1,77 @@
-unless defined?(Gem)
-  require 'rubygems'
-  gem 'rspec'
-  gem 'ruby-prof'
-end
-
-require 'ruby-prof'
 require 'fileutils'
+require 'ruby-prof'
+require 'rspec/core'
+require 'rspec-prof/filename_helpers'
 
-require File.join(File.dirname(__FILE__), "rspec")
-require 'rspec-prof/profiler'
-$rspec_prof_filename_id = 0
-$rspec_prof_thread_id = Thread.current.object_id
+class RSpecProf
+  extend FilenameHelpers
 
-# See the README for general usage information.
-#
-# See RSpecProf::Profiler for all configuration options.
-#
-# You can enable RSpecProf by adding
-#   RSpecProf.enable!
-# to your spec_helper.rb file. Actually, RSpecProf is enabled by default.
-#
-# You can disable RSpecProf by adding
-#   RSpecProf.disable!
-# to your spec_helper.rb file.
-#
-# You can see if RSpecProf is enabled by calling
-#   RSpecProf.enabled?
-#
-module RSpecProf
+  @printer_class = RubyProf::GraphHtmlPrinter
+
   class << self
-    # Enables all profiling
-    def enable!
-      @enabled = true
-    end
-    
-    # Disables all profiling with RSpecProf
-    def disable!
-      @enable = false
-    end
-    
-    # Returns true if profiling is enabled, false otherwise.
-    def enabled?
-      @enabled ||= true
+    attr_accessor :printer_class
+
+    def profile filename
+      profiler = new.start
+      yield
+    ensure
+      profiler.save_to filename
     end
   end
-  
-  module InstanceMethods
-    # Returns a unique filename for this example group, based on the total description and a unique identifier.
-    def default_filename
-      if RSPEC_VERSION >= "2.0.0"
-        description = self.example.to_s
-        description = self.class.ancestors.collect { |a| a.description }.reverse.join(" ") if 
-			(description.nil? || description.empty?)
-        puts description
-        (
-          "#{$rspec_prof_filename_id += 1}-" +
-          description
-        ).gsub(/\s+/, '_').gsub(/\(profiling\)/, '')
-      else
-        (
-          "#{$rspec_prof_filename_id += 1}-" +
-          self.class.description_parts.join(" ") +
-          " #{self.description}"
-        ).gsub(/\s+/, '_').gsub(/\(profiling\)/, '')
-      end
-    end
+
+  def start
+    return if @profiling
+    @profiling = true
+    RubyProf.start
+    self
   end
-  
-  module ClassMethods
-    # Sets up a profiling context. All specs within this context will be profiled. You can pass a scope of
-    # :each or :all. A scope of :each will cause each contained spec to be profiled independently of any others;
-    # a scope of :all will profile all specs at once and produce a net result. You can also pass some options:
-    # see RSpecProf::Profiler for information on those.
-    def profile(scope = :each, options = {}, &block)
-      if scope.kind_of?(Hash)
-        options = scope.merge( options )
-        scope = :each
-      end
-      
-      context "(profiling)" do
-        before(scope) do
-          raise "Cannot start profiling because a profiler is already active" if @profiler
-          if Thread.current.object_id == $rspec_prof_thread_id
-            options[:file] ||= default_filename
-            @profiler = RSpecProf::Profiler.new(options)
-            @profiler.start
-          else
-            Kernel.warn "Profiling is disabled because you appear to be multi-threading the specs"
-          end
-        end
-        
-        instance_eval &block
-        
-        after(scope) do
-          @profiler.stop if @profiler
-          @profiler = nil
-        end
-      end
+
+  def stop
+    return unless @profiling
+    @profiling = false
+    @result = RubyProf.stop
+  end
+
+  def profiling?
+    @profiling
+  end
+
+  def result
+    @result
+  end
+
+  def save_to filename
+    stop
+    FileUtils.mkdir_p File.dirname(filename)
+    File.open(filename, "w") do |f|
+      printer = RSpecProf.printer_class.new(result)
+      printer.print f
     end
   end
 end
 
-if RSPEC_VERSION >= "2.0.0"
-  RSpec.configure do |config|
-    config.extend RSpecProf::ClassMethods
-    config.include RSpecProf::InstanceMethods
+RSpec.configure do |config|
+  config.before(:all) do
+    unless ['all', 'each', ''].include?(ENV['RSPEC_PROFILE'].to_s)
+      raise "ENV['RSPEC_PROFILE'] should be blank, 'all' or 'each', but was '#{ENV['RSPEC_PROFILE']}'"
+    end
+
+    if ENV['RSPEC_PROFILE'] == 'all'
+      @profiler = RSpecProf.new.start
+    end
   end
 
-  #RSpec::Core::ExampleGroup.send(:include, RSpecProf::ClassMethods)
-  #RSpec::Core::Example.send(:include, RSpecProf::InstanceMethods)
-else
-  Spec::Runner.configure do |config|
-    config.extend RSpecProf::ClassMethods
-    config.include RSpecProf::InstanceMethods
+  config.after(:all) do
+    if ENV['RSPEC_PROFILE'] == 'all'
+      @profiler.save_to  "profiles/all.html"
+    end
   end
-  
-  Spec::Example::ExampleGroupMethods.send(:include, RSpecProf::ClassMethods)
-  Spec::Example::ExampleMethods.send(:include, RSpecProf::InstanceMethods)
+
+  config.around(:each) do |example|
+    if ENV['RSPEC_PROFILE'] == 'each'
+      RSpecProf.profile(RSpecProf.filename_for(example)) { example.call }
+    else
+      example.call
+    end
+  end
 end

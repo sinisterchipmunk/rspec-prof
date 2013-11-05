@@ -1,4 +1,2 @@
-source :gemcutter
-gem 'rspec'
-gem 'ruby-prof'
-gem 'rake'
+source 'https://rubygems.org'
+gemspec

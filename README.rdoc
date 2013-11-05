@@ -1,109 +1,65 @@
 = rspec-prof
 
-Integrates ruby-prof with RSpec, allowing you to easily profile your RSpec examples.
+Integrates ruby-prof with RSpec, allowing you to easily profile your RSpec
+examples.
 
 == Installation
 
-  gem install rspec-prof
+If you need to use rspec-prof in Rails 2.x or RSpec 1.x, use version `0.0.3`.
 
-== Setup
+Gemfile:
 
-You'd probably ought to enable the gem in your spec_helper.rb file:
-  gem 'rspec-prof'
-  require 'rspec-prof'
-  
-Or, in Rails 2 (config/environment.rb):
-  config.gem 'rspec-prof'
-  
-Or, in Rails 3 (Gemfile):
   group :test do
     gem 'rspec-prof'
   end
 
 == Usage
 
-Easy, peasy: in your spec files, simply add a "profile" context:
+The easiest way to use rspec-prof is to export the `RSPEC_PROFILE` environment
+variable:
 
-  describe MyAwesomeObject do
-    context "with an awesome string" do
-      subject { MyAwesomeObject.new("an awesome string") }
-      
-      profile do    # profile these examples!
-        it "should be awesome" do
-          subject.should be_awesome
-        end
-        
-        it "should be epic" do
-          subject.should be_epic
-        end
-      end
-      
-      # not profiled:
-      it "should not be fail" do
-        subject.should_not be_fail
-      end
+  $ rake spec RSPEC_PROFILE=each
+
+This will cause every spec to be profiled individually. The output will be
+placed in `./profiles` by default.
+
+To execute all specs as parts of a single profile, export `RSPEC_PROFILE=all`
+instead.
+
+== Configuration
+
+You can set some configuration options for `rspec-prof`, as long as you do so
+before `RSpec` begins running specs. Thus, the best place for this
+configuration is in `spec/support/rspec-prof.rb`.
+
+Valid configuration options and their default values are:
+
+  RSpecProf.printer_class = RubyProf::GraphHtmlPrinter
+    # The printer to be used when writing profiles
+
+  RSpecProf::FilenameHelpers.file_extension = "html"
+    # The file extension for profiles written to disk
+
+  RSpecProf::FilenameHelpers.output_dir = "profiles"
+    # The destination directory into which profiles are written
+
+== Pausing and Resuming
+
+It is perfectly OK to do this:
+
+  require 'spec_helper'
+
+  describe "smth" do
+    before do
+      # let's not profile the test set-up
+      RubyProf.pause if RubyProf.running?
+
+      sleep 30 # doing something expensive...
+
+      # don't forget to resume so specs can be measured!
+      RubyProf.resume if RubyProf.running?
     end
   end
-  
-The usage overviewed above will, by default, profile each spec independently 
-and write each result to a file into a profile directory with a unqiue name.
-
-If you need to profile all of them in a single go, that's easy too:
-
-  describe MyAwesomeObject do
-    # . . .
-    
-    profile :all do   # run all of these examples in a single profile
-      # . . .
-    end
-  end
-  
-How about displaying the output in flat format to STDOUT?  No problem:
-
-  describe MyAwesomeObject do
-    # . . .
-    
-    profile :file => STDOUT, :printer => :flat do   # show flat results to STDOUT 
-      # . . .
-    end
-  end
-
-
-You can also explicitly pass an :each option to #profile, if it makes you feel better. There are a number of other
-options that you can pass in the form of a hash, such as min_percent:
-
-  describe MyAwesomeObject do
-    # . . .
-    
-    profile :min_percent => 0.01 do
-      # . . .
-    end
-  end
-  
-For an exhaustive list of options, see the RSpecProf::Profiler class.
-
-=== Suspending RSpecProf
-
-You probably don't want to run the profiler every time you run a spec, because the profiler by its very nature will slow
-down your app and, therefore, limit your productivity. To disable profiling without having to change your specs, simply
-add this to your spec helper:
-
-  RSpecProf.disable!
-  
-...and you're done. In case you need it (but I doubt you will because it's on by default), you can also enable the
-profiler similarly:
-
-  RSpecProf.enable!
-
-== Known Limitations
-
-* ruby-prof cannot multithread. Therefore, RSpecProf also cannot multithread. If you try, you SHOULD get a warning (but
-  just in case, this is your warning too) that the profiling cannot be performed due to multithreading. RSpecProf SHOULD
-  disable itself at this point and allow your specs to run normally.
-* Profile blocks cannot be nested within each other. To do so would require multithreading and, even were it possible,
-  I'm not sure how RSpecProf would be expected to comply; instead, RSpecProf will merely raise an error and your specs
-  will fail.
-* I think that's it.  
 
 == Note on Patches/Pull Requests
  
@@ -111,8 +67,6 @@ profiler similarly:
 * Make your feature addition or bug fix.
 * Add tests for it. This is important so I don't break it in a
   future version unintentionally.
-* Commit, do not mess with rakefile, version, or history.
-  (if you want to have your own version, that is fine but bump version in a commit by itself I can ignore when I pull)
 * Send me a pull request. Bonus points for topic branches.
 
 == Copyright
