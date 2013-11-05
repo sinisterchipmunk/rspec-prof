@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
   s.rubygems_version = "1.8.10"
   s.summary = "Integrates ruby-prof with RSpec, allowing you to easily profile your RSpec examples."
-  s.test_files = `git ls-files -- spec/`
+  s.test_files = `git ls-files -- features/`.split("\n")
 
   s.add_runtime_dependency 'rspec'
   s.add_runtime_dependency 'ruby-prof'
