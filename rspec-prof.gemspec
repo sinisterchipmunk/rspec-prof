@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 Gem::Specification.new do |s|
+  s.licenses = [ 'MIT' ]
   s.name = "rspec-prof"
   s.version = "0.0.4"
 
