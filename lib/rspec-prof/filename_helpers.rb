@@ -18,7 +18,7 @@ class RSpecProf
 
     def path_for metadata
       if metadata[:example_group]
-        File.join(path_for(metadata[:example_group], metadata[:description]))
+        File.join(path_for(metadata[:example_group]), metadata[:description])
       else
         metadata[:description]
       end
