@@ -51,7 +51,7 @@ class RSpecProf
 end
 
 RSpec.configure do |config|
-  config.before(:all) do
+  config.before(:suite) do
     unless ['all', 'each', ''].include?(ENV['RSPEC_PROFILE'].to_s)
       raise "ENV['RSPEC_PROFILE'] should be blank, 'all' or 'each', but was '#{ENV['RSPEC_PROFILE']}'"
     end
@@ -61,7 +61,7 @@ RSpec.configure do |config|
     end
   end
 
-  config.after(:all) do
+  config.after(:suite) do
     if ENV['RSPEC_PROFILE'] == 'all'
       @profiler.save_to  "profiles/all.html"
     end
