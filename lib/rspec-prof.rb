@@ -45,7 +45,7 @@ class RSpecProf
     FileUtils.mkdir_p File.dirname(filename)
     File.open(filename, "w") do |f|
       printer = RSpecProf.printer_class.new(result)
-      printer.print f
+      printer.print(f, :min_percent => 1)
     end
   end
 end
