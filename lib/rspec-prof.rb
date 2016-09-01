@@ -63,7 +63,7 @@ RSpec.configure do |config|
 
   config.after(:suite) do
     if ENV['RSPEC_PROFILE'] == 'all'
-      @profiler.save_to  "profiles/all.html"
+      @profiler.save_to "#{RSpecProf.output_dir}/all.#{RSpecProf.file_extension}"
     end
   end
 
