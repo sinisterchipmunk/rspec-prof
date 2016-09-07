@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    rspec-prof (0.0.6)
+    rspec-prof (0.0.7)
       rspec (~> 3.0)
       ruby-prof
 
