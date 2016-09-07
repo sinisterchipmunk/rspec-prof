@@ -7,7 +7,7 @@ Before do |scenario|
     SimpleCov.start do
       root "#{File.expand_path('../..', File.dirname(__FILE__))}"
       coverage_dir 'coverage'
-      SimpleCov.command_name #{scenario.title.inspect}
+      SimpleCov.command_name #{scenario.name.inspect}
       filters.clear
       add_filter { |f| !f.filename['rspec-prof'] }
     end
