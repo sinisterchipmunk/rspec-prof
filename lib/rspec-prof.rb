@@ -18,6 +18,10 @@ class RSpecProf
       profiler.save_to filename
     end
   end
+  
+  def initialize
+    @profiling = nil
+  end
 
   def start
     return if @profiling
