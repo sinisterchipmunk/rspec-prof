@@ -38,7 +38,7 @@ GEM
     cucumber-wire (0.0.1)
     diff-lcs (1.2.5)
     docile (1.1.5)
-    ffi (1.9.14)
+    ffi (1.9.25)
     gherkin (4.0.0)
     json (2.0.2)
     multi_json (1.12.1)
