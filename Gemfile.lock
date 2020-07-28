@@ -40,7 +40,7 @@ GEM
     docile (1.1.5)
     ffi (1.9.14)
     gherkin (4.0.0)
-    json (2.0.2)
+    json (2.3.1)
     multi_json (1.12.1)
     multi_test (0.1.2)
     rake (11.2.2)
